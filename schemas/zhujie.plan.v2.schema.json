@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zhujie.local/schema/zhujie.plan.v2.json",
+  "title": "筑界镜 AI 蓝图",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "planId", "dimension", "visualProfile", "base", "module", "coordinateSystem", "spawnPoint", "selections", "materials", "operations"],
+  "properties": {
+    "format": { "const": "zhujie.plan/2" },
+    "planId": { "type": "string", "minLength": 1 },
+    "dimension": { "$ref": "#/$defs/namespacedId" },
+    "visualProfile": {
+      "oneOf": [
+        { "$ref": "#/$defs/visualProfile" },
+        { "type": "null" }
+      ]
+    },
+    "base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scene", "revision"],
+      "properties": {
+        "scene": { "const": "live/scene.zjjscene" },
+        "revision": { "type": "string", "pattern": "^(root|sha256:[0-9a-f]{64})$" }
+      }
+    },
+    "module": { "$ref": "#/$defs/module" },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unit", "axes"],
+      "properties": {
+        "unit": { "const": "block" },
+        "axes": { "const": "x-east,y-up,z-south" }
+      }
+    },
+    "spawnPoint": {
+      "oneOf": [
+        { "$ref": "#/$defs/position" },
+        { "type": "null" }
+      ]
+    },
+    "selections": {
+      "type": "object",
+      "maxProperties": 10000,
+      "additionalProperties": { "$ref": "#/$defs/box" }
+    },
+    "materials": {
+      "type": "object",
+      "maxProperties": 10000,
+      "additionalProperties": { "$ref": "#/$defs/material" }
+    },
+    "operations": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/fillBox" },
+          { "$ref": "#/$defs/columns" }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "visualProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["edition", "versionName", "dataVersion", "storageFamily"],
+      "properties": {
+        "edition": { "const": "java" },
+        "versionName": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "dataVersion": { "type": ["integer", "null"], "minimum": 0 },
+        "storageFamily": {
+          "enum": ["unknown", "legacyNumericAnvil", "flattenedPalette", "modernSectionPalette"]
+        }
+      },
+      "anyOf": [
+        { "required": ["versionName"], "properties": { "versionName": { "type": "string" } } },
+        { "required": ["dataVersion"], "properties": { "dataVersion": { "type": "integer" } } },
+        {
+          "required": ["storageFamily"],
+          "properties": {
+            "storageFamily": { "enum": ["legacyNumericAnvil", "flattenedPalette", "modernSectionPalette"] }
+          }
+        }
+      ]
+    },
+    "module": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "kind", "bounds", "regionX", "regionZ"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_.-]{0,63}$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "kind": { "enum": ["district", "region", "workZone"] },
+        "bounds": { "oneOf": [{ "$ref": "#/$defs/box" }, { "type": "null" }] },
+        "regionX": { "type": ["integer", "null"] },
+        "regionZ": { "type": ["integer", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "region" } } },
+          "then": { "properties": { "regionX": { "type": "integer" }, "regionZ": { "type": "integer" } } },
+          "else": { "properties": { "regionX": { "type": "null" }, "regionZ": { "type": "null" } } }
+        }
+      ]
+    },
+    "namespacedId": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+:[a-z0-9_./-]+$"
+    },
+    "position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "integer" },
+        "y": { "type": "integer" },
+        "z": { "type": "integer" }
+      }
+    },
+    "box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "maxExclusive"],
+      "properties": {
+        "min": { "$ref": "#/$defs/position" },
+        "maxExclusive": { "$ref": "#/$defs/position" }
+      }
+    },
+    "blockState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "properties"],
+      "properties": {
+        "name": { "$ref": "#/$defs/namespacedId" },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-z0-9_./-]+$"
+          }
+        }
+      }
+    },
+    "material": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidates", "traits", "allowAir"],
+      "properties": {
+        "exactState": {
+          "oneOf": [
+            { "$ref": "#/$defs/blockState" },
+            { "type": "null" }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/blockState" }
+        },
+        "traits": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "allowAir": { "type": "boolean" }
+      }
+    },
+    "operationBase": {
+      "type": "object",
+      "required": ["op", "id", "selectionId", "materialId"],
+      "properties": {
+        "op": { "type": "string" },
+        "id": { "type": "string", "minLength": 1 },
+        "selectionId": { "type": "string", "minLength": 1 },
+        "materialId": { "type": "string", "minLength": 1 },
+        "writeStrategy": {
+          "enum": ["overwrite", "onlyAir", "replaceMatching", "failOnConflict"]
+        },
+        "matchState": {
+          "oneOf": [
+            { "$ref": "#/$defs/blockState" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "fillBox": {
+      "allOf": [
+        { "$ref": "#/$defs/operationBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "id", "selectionId", "materialId", "bounds"],
+          "properties": {
+            "op": { "const": "fillBox" },
+            "id": { "type": "string", "minLength": 1 },
+            "selectionId": { "type": "string", "minLength": 1 },
+            "materialId": { "type": "string", "minLength": 1 },
+            "writeStrategy": { "enum": ["overwrite", "onlyAir", "replaceMatching", "failOnConflict"] },
+            "matchState": { "oneOf": [{ "$ref": "#/$defs/blockState" }, { "type": "null" }] },
+            "bounds": { "$ref": "#/$defs/box" }
+          }
+        }
+      ]
+    },
+    "columns": {
+      "allOf": [
+        { "$ref": "#/$defs/operationBase" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "id", "selectionId", "materialId", "origins", "height"],
+          "properties": {
+            "op": { "const": "columns" },
+            "id": { "type": "string", "minLength": 1 },
+            "selectionId": { "type": "string", "minLength": 1 },
+            "materialId": { "type": "string", "minLength": 1 },
+            "writeStrategy": { "enum": ["overwrite", "onlyAir", "replaceMatching", "failOnConflict"] },
+            "matchState": { "oneOf": [{ "$ref": "#/$defs/blockState" }, { "type": "null" }] },
+            "origins": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 200000,
+              "items": { "$ref": "#/$defs/position" }
+            },
+            "height": { "type": "integer", "minimum": 1 }
+          }
+        }
+      ]
+    }
+  }
+}

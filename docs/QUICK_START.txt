@@ -1,0 +1,57 @@
+Voxelens Studio — 开始使用 / Quick start
+
+适用系统：Windows 11，64 位 x64，支持 Direct3D 11 的显卡。
+这是免安装版，已包含运行环境，无需安装 .NET、Java 或开发工具。
+
+1. 对下载的 ZIP 点击右键 → 全部解压，放到自己有写入权限的文件夹。
+2. 打开解压后的文件夹，双击 ZhuJieJing.Studio.exe。
+   不要直接从压缩包内启动，也不要只拷贝其中的 EXE。
+   zjj.exe 是可选的命令行工具，普通用户不需要运行它。
+3. 打开“设置”，选择中文或英文。
+4. 在“材质资源”中自动查找或选择自己的 Minecraft 客户端资源 JAR，
+   保存后下次不必重新选择。未设置资源时仍可使用纯色预览。
+5. 点击“打开”，选择 Minecraft 世界文件夹、.schematic 或 .zz 蓝图。
+
+基本操作
+- 模型浏览：鼠标左键拖动旋转，右键拖动平移，滚轮缩放。
+- 观察者：选择模式后点击画面，WASD 移动，鼠标转向，
+  空格上升、Ctrl 下降、Esc 退出。右侧可调整移动速度和镜头视野。
+- 地图工具：可视化裁剪、空白区块清理、全地图方块替换及 1.12.2 转换。
+- 方块检查：查看名称、材质、状态、旧版 ID 与转换目标。
+
+地图操作
+浏览与转换预览只读，转换导出生成新世界目录。
+裁剪、清理和方块替换会修改原地图，请先备份并关闭 Minecraft 或服务端。
+当前为预览版；高版本降级可能有替代或裁切，导出后请在游戏中检查。
+
+更新时请先退出软件。保留自己的语言文件、设置和日志；
+不要删除包内 DLL、languages、licenses 或许可文件。
+软件不附带 Minecraft 资源 JAR 或世界文件。
+
+说明与反馈：https://github.com/LuoshinDev/Voxelens-Studio
+问题反馈：https://github.com/LuoshinDev/Voxelens-Studio/issues
+
+English
+
+Requires Windows 11 x64 and a Direct3D 11-capable GPU.
+This portable package includes its runtime. No .NET, Java or developer tools needed.
+
+1. Extract ALL files from the ZIP into a writable folder.
+2. Double-click ZhuJieJing.Studio.exe in that folder. Do not run it inside the ZIP
+   or copy just the executable. zjj.exe is an optional command-line tool.
+3. Choose your language in Settings.
+4. Auto-detect or select your own Minecraft client resource JAR and save it.
+   The choice persists. Without resources, solid-color previews remain available.
+5. Open a Minecraft world folder, .schematic file or .zz blueprint.
+
+Orbit: left-drag to rotate, right-drag to pan, scroll to zoom.
+Observer: click the viewport, WASD to move, mouse to look, Space/Ctrl to move
+up/down, Esc to exit. Adjust speed and field of view in the sidebar.
+
+Browsing and conversion previews are read-only; conversion exports a new folder.
+Crop, cleanup and replacement modify the original world. Back up and close
+Minecraft/server first. Validate converted worlds in Minecraft.
+
+Close Studio before upgrading and keep your custom language files/settings.
+Keep accompanying DLLs, languages, licenses and notices with the application.
+Minecraft client JARs and worlds are not included.

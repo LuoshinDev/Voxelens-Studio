@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZhuJieJing.Assets\ZhuJieJing.Assets.csproj" />
+    <ProjectReference Include="..\ZhuJieJing.Core\ZhuJieJing.Core.csproj" />
+    <ProjectReference Include="..\ZhuJieJing.Minecraft\ZhuJieJing.Minecraft.csproj" />
+    <ProjectReference Include="..\ZhuJieJing.Renderer\ZhuJieJing.Renderer.csproj" />
+    <ProjectReference Include="..\ZhuJieJing.SceneStore\ZhuJieJing.SceneStore.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>ZhuJieJing.Studio</AssemblyName>
+    <AssemblyTitle>Voxelens Studio</AssemblyTitle>
+    <Product>Voxelens Studio</Product>
+    <Description>现代化 Minecraft 地图预览与编辑工具</Description>
+    <Version>0.5.43</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\ZhuJieJing.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\..\licenses\**\*" Link="licenses\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="..\..\THIRD_PARTY_NOTICES.md" Link="THIRD_PARTY_NOTICES.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Resource Include="Assets\ZhuJieJing.png" />
+    <Resource Include="Assets\ZhuJieJing.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\en-US.json" LogicalName="ZhuJieJing.App.Localization.en-US.json" />
+    <Content Include="Localization\*.json" Link="languages\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Localization\README.md" Link="languages\README.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="PublishArchitectCli" AfterTargets="Publish" Condition="'$(PublishArchitectCli)' != 'false'">
+    <MSBuild
+      Projects="..\ZhuJieJing.Cli\ZhuJieJing.Cli.csproj"
+      Targets="Restore;Publish"
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishDir=$(PublishDir)" />
+  </Target>
+
+</Project>

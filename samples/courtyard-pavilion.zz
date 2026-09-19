@@ -1,0 +1,79 @@
+{
+  "format": "zhujie.plan/2",
+  "planId": "courtyard-pavilion",
+  "dimension": "minecraft:overworld",
+  "visualProfile": null,
+  "base": {
+    "scene": "live/scene.zjjscene",
+    "revision": "root"
+  },
+  "module": {
+    "id": "courtyard",
+    "displayName": "庭院施工区",
+    "kind": "workZone",
+    "bounds": {
+      "min": { "x": -5, "y": -3, "z": -5 },
+      "maxExclusive": { "x": 6, "y": 7, "z": 6 }
+    },
+    "regionX": null,
+    "regionZ": null
+  },
+  "coordinateSystem": {
+    "unit": "block",
+    "axes": "x-east,y-up,z-south"
+  },
+  "spawnPoint": { "x": 0, "y": 32, "z": 0 },
+  "selections": {
+    "site": {
+      "min": { "x": -5, "y": -3, "z": -5 },
+      "maxExclusive": { "x": 6, "y": 7, "z": 6 }
+    }
+  },
+  "materials": {
+    "floor": {
+      "exactState": {
+        "name": "minecraft:stone_bricks",
+        "properties": {}
+      },
+      "candidates": [],
+      "traits": {},
+      "allowAir": false
+    },
+    "post": {
+      "exactState": {
+        "name": "minecraft:dark_oak_log",
+        "properties": { "axis": "y" }
+      },
+      "candidates": [],
+      "traits": { "role": "structure", "tone": "dark" },
+      "allowAir": false
+    }
+  },
+  "operations": [
+    {
+      "op": "fillBox",
+      "id": "floor",
+      "selectionId": "site",
+      "materialId": "floor",
+      "writeStrategy": "overwrite",
+      "bounds": {
+        "min": { "x": -5, "y": -3, "z": -5 },
+        "maxExclusive": { "x": 6, "y": -2, "z": 6 }
+      }
+    },
+    {
+      "op": "columns",
+      "id": "posts",
+      "selectionId": "site",
+      "materialId": "post",
+      "writeStrategy": "onlyAir",
+      "origins": [
+        { "x": -4, "y": -2, "z": -4 },
+        { "x": 4, "y": -2, "z": -4 },
+        { "x": -4, "y": -2, "z": 4 },
+        { "x": 4, "y": -2, "z": 4 }
+      ],
+      "height": 6
+    }
+  ]
+}

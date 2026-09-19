@@ -1,0 +1,192 @@
+<Window x:Class="ZhuJieJing.App.ComponentLibraryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:ZhuJieJing.App.Localization"
+        xmlns:renderer="clr-namespace:ZhuJieJing.Renderer.Controls;assembly=ZhuJieJing.Renderer"
+        Title="{loc:Text '建筑组件库 · Voxelens Studio'}" Icon="Assets/ZhuJieJing.ico"
+        Width="1240" Height="830" MinWidth="960" MinHeight="560"
+        WindowStartupLocation="CenterOwner" Background="#F7F5FC" UseLayoutRounding="True">
+    <Window.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#756588"/><Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,12,0,5"/>
+        </Style>
+        <Style x:Key="LibraryButton" TargetType="Button" BasedOn="{StaticResource HeaderActionButtonStyle}">
+            <Setter Property="Padding" Value="12,8"/><Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="MinHeight" Value="34"/>
+        </Style>
+        <Style x:Key="LibraryFolderCard" TargetType="RadioButton">
+            <Setter Property="Padding" Value="12,11"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#786B8B"/>
+            <Setter Property="BorderBrush" Value="#E6DDEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Card" CornerRadius="12" Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Card" Property="Background" Value="#FAF7FF"/>
+                                <Setter TargetName="Card" Property="BorderBrush" Value="#C8B3EF"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="#7546CE"/>
+                                <Setter TargetName="Card" Property="Background" Value="#F0E8FF"/>
+                                <Setter TargetName="Card" Property="BorderBrush" Value="#AD89EE"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Card" Property="BorderBrush" Value="#8554D9"/></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Card" Property="Opacity" Value="0.55"/></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border Background="White" BorderBrush="#E8E0F2" BorderThickness="0,0,0,1" Padding="22,17">
+            <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{loc:Text '建筑组件库'}" FontSize="23" FontWeight="SemiBold" Foreground="#342B47"/>
+                    <TextBlock Text="{loc:Text '待批准  →  旋转检查  →  批准入库  →  放入工程'}" Margin="0,5,12,0" Foreground="#7A6C92" FontSize="12" TextWrapping="Wrap"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="CopyAuthoringPromptButton" Content="{loc:Text '复制 AI 制作要求'}" Style="{StaticResource LibraryButton}" Click="CopyAuthoringPrompt_Click" ToolTip="{loc:Text '仅复制到本机剪贴板，由您决定交给哪个 AI'}"/>
+                    <Button x:Name="ImportCandidateButton" Content="{loc:Text '＋ 导入候选 .zz'}" Style="{StaticResource LibraryButton}" Click="ImportCandidate_Click"/>
+                    <Button x:Name="ImportVersionButton" Content="{loc:Text '导入新版候选'}" Style="{StaticResource LibraryButton}" Click="ImportVersion_Click" IsEnabled="False" ToolTip="{loc:Text '保留选中组件的全部批准版本；新候选仍需要检查和确认'}"/>
+                    <Button x:Name="RefreshLibraryButton" Content="{loc:Text '刷新'}" Style="{StaticResource LibraryButton}" Click="RefreshLibrary_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="258"/><ColumnDefinition Width="*"/><ColumnDefinition Width="300"/></Grid.ColumnDefinitions>
+            <Border Background="#FCFBFF" BorderBrush="#E8E0F2" BorderThickness="0,0,1,0" Padding="15">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <StackPanel Margin="0,0,0,10">
+                        <UniformGrid Columns="2">
+                            <RadioButton x:Name="PendingTab" GroupName="LibraryFolder" IsChecked="True" Click="LibraryFolder_Click" Style="{StaticResource LibraryFolderCard}" Margin="0,0,5,0" AutomationProperties.Name="待批准">
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Text '待批准'}" FontSize="12" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="PendingCountText" Text="0" FontSize="25" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                                    <TextBlock Text="{loc:Text '等待审核'}" FontSize="10" Opacity="0.8" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton x:Name="ApprovedTab" GroupName="LibraryFolder" Click="LibraryFolder_Click" Style="{StaticResource LibraryFolderCard}" Margin="5,0,0,0" AutomationProperties.Name="已批准">
+                                <StackPanel>
+                                    <TextBlock Text="{loc:Text '已批准'}" FontSize="12" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="ApprovedCountText" Text="0" FontSize="25" FontWeight="SemiBold" Margin="0,5,0,0"/>
+                                    <TextBlock Text="{loc:Text '可用于工程'}" FontSize="10" Opacity="0.8" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </UniformGrid>
+                        <Button Content="{loc:Text '打开当前目录'}" Click="OpenLibraryFolder_Click" Margin="0,8,0,0" Padding="8,5"/>
+                    </StackPanel>
+                    <TextBox x:Name="LibrarySearchBox" Grid.Row="1" TextChanged="LibrarySearch_TextChanged" ToolTip="{loc:Text '搜索名称、分类、标签或备注'}" AutomationProperties.Name="搜索组件" Padding="8,7"/>
+                    <CheckBox x:Name="LatestOnlyToggle" Grid.Row="2" Content="{loc:Text '只显示最新版本'}" IsChecked="True" Margin="0,10,0,10" Click="LibraryFilter_Click"/>
+                    <ListBox x:Name="LibraryList" Grid.Row="3" SelectionChanged="LibraryList_SelectionChanged" BorderThickness="0" Background="Transparent"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                        <ListBox.ItemTemplate><DataTemplate>
+                            <StackPanel Margin="4,8" Width="199">
+                                <TextBlock Text="{Binding DisplayTitle}" FontWeight="SemiBold" Foreground="#49335F" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Metadata.Category}" Foreground="#8B5CF6" FontSize="10.5" Margin="0,5,0,0"/>
+                                <TextBlock Text="{Binding Subtitle}" Foreground="#7A6C92" FontSize="10" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </DataTemplate></ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock x:Name="LibraryCountText" Grid.Row="4" Text="{loc:Text '还没有批准的组件'}" Foreground="#7A6C92" FontSize="11" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+            <Grid Grid.Column="1" Margin="16">
+                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <StackPanel Margin="0,0,0,12">
+                    <TextBlock x:Name="PreviewTitleText" Text="{loc:Text '让满意的建筑，成为下一张地图的起点'}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="PreviewStateText" Text="{loc:Text 'AI 新作品会显示在待批准目录；选择后检查，满意再批准。'}" Margin="0,5,0,0" Foreground="#7A6C92" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+                <Border Grid.Row="1" BorderBrush="#DCCEF6" BorderThickness="1" CornerRadius="12" ClipToBounds="True">
+                    <Grid>
+                        <renderer:VoxelViewport x:Name="ComponentViewport"/>
+                        <Border x:Name="PreviewEmptyOverlay" Background="#F4F0FC" Padding="28">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{loc:Text '从左侧选择一个组件'}" FontSize="22" FontWeight="SemiBold" Foreground="#6D45AF" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{loc:Text '支持独立 .zz 方块组件，含 Minecraft 材质与朝向。&#10;建议 AI 分别生成门楼、屋顶、树木、家具等可复用建筑。'}" Foreground="#7A6C92" TextAlignment="Center" TextWrapping="Wrap" Margin="0,12,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border x:Name="PreviewBusyOverlay" Background="#BDF4F0FC" Visibility="Collapsed" Padding="24">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock x:Name="PreviewBusyText" Text="{loc:Text '正在准备预览…'}" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap"/>
+                                <ProgressBar x:Name="PreviewProgress" IsIndeterminate="True" Height="6" Margin="0,14,0,0"/>
+                                <Button x:Name="CancelOperationButton" Content="{loc:Text '取消本次操作'}" Click="CancelOperation_Click" Margin="0,14,0,0" Padding="14,7" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+                <Grid Grid.Row="2" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBlock Text="{loc:Text '左键拖动旋转 · 右键拖动平移 · 滚轮缩放'}" Foreground="#7A6C92" FontSize="10.5" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                    <Button x:Name="ResetViewButton" Grid.Column="1" Content="{loc:Text '重置视角'}" Click="ResetView_Click" Padding="12,7" IsEnabled="False"/>
+                </Grid>
+                <Border Grid.Row="3" Margin="0,12,0,0" Background="White" CornerRadius="9" Padding="12">
+                    <TextBlock x:Name="PreviewDetailsText" Text="{loc:Text '尺寸、方块数量与资源信息将在预览就绪后显示。'}" FontSize="11" Foreground="#6B597D" TextWrapping="Wrap"/>
+                </Border>
+            </Grid>
+            <Border Grid.Column="2" Background="White" BorderBrush="#E8E0F2" BorderThickness="1,0,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Margin="16">
+                        <TextBlock x:Name="DetailsTitleText" Text="{loc:Text '组件信息'}" FontSize="14" FontWeight="SemiBold"/>
+                        <TextBlock Text="{loc:Text '名称'}" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="ComponentNameBox" MaxLength="80" AutomationProperties.Name="组件名称" TextChanged="Metadata_TextChanged"/>
+                        <TextBlock Text="{loc:Text '分类'}" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="ComponentCategoryBox" Text="{loc:Text '建筑'}" MaxLength="40" AutomationProperties.Name="组件分类" TextChanged="Metadata_TextChanged"/>
+                        <TextBlock Text="{loc:Text '标签（逗号分隔，最多 12 个）'}" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="ComponentTagsBox" MaxLength="400" AutomationProperties.Name="组件标签"/>
+                        <TextBlock Text="{loc:Text '备注'}" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="ComponentNotesBox" MaxLength="2000" AcceptsReturn="True" TextWrapping="Wrap" Height="65" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="组件备注"/>
+                        <TextBlock Text="{loc:Text '来源说明（模型、提示词摘要等）'}" Style="{StaticResource FieldLabel}"/>
+                        <TextBox x:Name="ComponentSourceBox" MaxLength="500" TextWrapping="Wrap" Height="45" AutomationProperties.Name="组件来源说明"/>
+                        <Border x:Name="ApprovalPanel" Background="#F4EDFF" CornerRadius="9" Padding="12" Margin="0,15,0,0">
+                            <StackPanel>
+                                <TextBlock x:Name="ApprovalTargetText" Text="{loc:Text '候选尚未保存'}" FontWeight="SemiBold" Foreground="#7044B5"/>
+                                <CheckBox x:Name="InspectedCheckBox" Checked="Inspection_Changed" Unchecked="Inspection_Changed" IsEnabled="False" Margin="0,10,0,8">
+                                    <TextBlock Text="{loc:Text '我已检查 3D 效果，确认保存这个组件'}" TextWrapping="Wrap" FontSize="11"/>
+                                </CheckBox>
+                                <Button x:Name="ApproveComponentButton" Content="{loc:Text '批准并移入已批准'}" Click="ApproveComponent_Click" IsEnabled="False" Style="{StaticResource ExportButtonStyle}" Padding="10,10" Background="#8B5CF6" Foreground="White"/>
+                                <Button x:Name="SavePendingButton" Content="{loc:Text '保存待批准信息'}" Click="SavePending_Click" Margin="0,8,0,0" Padding="8" IsEnabled="False"/>
+                                <Button x:Name="RemovePendingButton" Content="{loc:Text '移至回收站'}" Click="RemovePending_Click" Margin="0,8,0,0" Padding="8" IsEnabled="False"/>
+                            </StackPanel>
+                        </Border>
+                        <StackPanel x:Name="PlacementPanel" Visibility="Collapsed" Margin="0,16,0,0">
+                            <Border Height="1" Background="#E8E0F2" Margin="0,0,0,14"/>
+                            <TextBlock Text="{loc:Text '放置这个批准版本'}" FontWeight="SemiBold"/>
+                            <TextBlock Text="{loc:Text '锚点是旋转后包围盒的西北底角；只放置组件方块，不清空周围空间。'}" Foreground="#7A6C92" TextWrapping="Wrap" FontSize="10.5" Margin="0,6,0,0"/>
+                            <TextBlock Text="{loc:Text '目标坐标 X / Y / Z'}" Style="{StaticResource FieldLabel}"/>
+                            <UniformGrid Columns="3">
+                                <TextBox x:Name="AnchorXBox" Text="0" Margin="0,0,4,0" AutomationProperties.Name="组件锚点 X"/>
+                                <TextBox x:Name="AnchorYBox" Text="32" Margin="2,0" AutomationProperties.Name="组件锚点 Y"/>
+                                <TextBox x:Name="AnchorZBox" Text="0" Margin="4,0,0,0" AutomationProperties.Name="组件锚点 Z"/>
+                            </UniformGrid>
+                            <TextBlock Text="{loc:Text '水平旋转（同步预览）'}" Style="{StaticResource FieldLabel}"/>
+                            <ComboBox x:Name="RotationBox" SelectedIndex="0" SelectionChanged="Rotation_SelectionChanged" AutomationProperties.Name="组件水平旋转">
+                                <ComboBoxItem Content="{loc:Text '0° · 原始方向'}"/><ComboBoxItem Content="{loc:Text '90° · 顺时针'}"/><ComboBoxItem Content="180°"/><ComboBoxItem Content="{loc:Text '270° · 顺时针'}"/>
+                            </ComboBox>
+                            <Button x:Name="UseComponentButton" Content="{loc:Text '使用这个组件'}" Click="UseComponent_Click" IsEnabled="False" Padding="10,10" Margin="0,12,0,0"/>
+                            <TextBlock x:Name="PlacementHintText" Text="{loc:Text '生成独立放置草稿；不会直接修改地图。'}" Foreground="#7A6C92" FontSize="10.5" TextWrapping="Wrap" Margin="0,7,0,0"/>
+                        </StackPanel>
+                        <TextBlock x:Name="ProvenanceText" Foreground="#8D8198" FontSize="10" TextWrapping="Wrap" Margin="0,15,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+        <Border Grid.Row="2" Background="#F0EBF8" Padding="18,10">
+            <TextBlock x:Name="LibraryStatusText" Text="{loc:Text '就绪 · 候选预览与已批准组件严格分开'}" FontSize="11" Foreground="#6B597D" TextWrapping="Wrap"/>
+        </Border>
+    </Grid>
+</Window>

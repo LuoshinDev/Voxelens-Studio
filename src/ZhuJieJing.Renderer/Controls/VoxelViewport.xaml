@@ -1,0 +1,71 @@
+<UserControl x:Class="ZhuJieJing.Renderer.Controls.VoxelViewport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ZhuJieJing.Renderer.Controls"
+             Focusable="True"
+             PreviewKeyDown="OnPreviewKeyDown"
+             Background="#E9E4FF">
+    <Grid ClipToBounds="True">
+        <controls:SynchronizedDrawingSurface x:Name="Surface"
+                                             AlwaysRefresh="True"
+                                             Focusable="True"
+                                             LoadContent="OnLoadContent"
+                                             UnloadContent="OnUnloadContent"
+                                             Draw="OnDraw"
+                                             MouseLeftButtonDown="OnMouseLeftButtonDown"
+                                             MouseRightButtonDown="OnMouseRightButtonDown"
+                                             MouseMove="OnMouseMove"
+                                             LostMouseCapture="OnLostMouseCapture"
+                                             MouseWheel="OnMouseWheel" />
+        <Grid x:Name="RendererStartupOverlay"
+              Panel.ZIndex="10"
+              Background="#D9F4F1FA"
+              IsHitTestVisible="False"
+              SnapsToDevicePixels="True">
+            <Border Width="380"
+                    Margin="18"
+                    Padding="18,15"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#F0211B2B"
+                    BorderBrush="#9A8A69AD"
+                    BorderThickness="1"
+                    CornerRadius="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Name="RendererStartupStageText"
+                               Text="正在准备渲染与光影"
+                               Foreground="#F6F1FB"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock x:Name="RendererStartupProgressText"
+                               Grid.Column="1"
+                               Margin="12,0,0,0"
+                               Text="准备中"
+                               Foreground="#D7B9FF"
+                               FontSize="11"
+                               FontWeight="SemiBold" />
+                    <ProgressBar x:Name="RendererStartupProgressBar"
+                                 Grid.Row="1"
+                                 Grid.ColumnSpan="2"
+                                 Minimum="0"
+                                 Maximum="100"
+                                 Value="0"
+                                 IsIndeterminate="True"
+                                 Height="6"
+                                 Margin="0,10,0,0"
+                                 Foreground="#C75FD0"
+                                 Background="#3D304D" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

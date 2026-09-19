@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZhuJieJing.Core\ZhuJieJing.Core.csproj" />
+    <ProjectReference Include="..\ZhuJieJing.Minecraft\ZhuJieJing.Minecraft.csproj" />
+    <ProjectReference Include="..\ZhuJieJing.SceneStore\ZhuJieJing.SceneStore.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>zjj</AssemblyName>
+    <Product>筑界镜 CLI</Product>
+    <Description>面向 AI 的 Minecraft 世界检查与筑界镜蓝图工具</Description>
+    <Version>0.2.0</Version>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
