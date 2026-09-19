@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/branding/voxelens-studio-logo.png" alt="Voxelens Studio Logo" width="128" height="128">
+  <img src="docs/branding/voxelens-studio-logo-transparent.png" alt="Voxelens Studio Logo" width="128" height="128">
 </p>
 
 <h1 align="center">Voxelens Studio · 筑界镜</h1>
